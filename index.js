@@ -6,7 +6,7 @@ var server = http.createServer((req,rep)=>{
 	if(req.url=="/favicon.ico"){
 		return;
 	}
-	rep.setHeader("content-type","text/html;charset=utf8");
+	//rep.setHeader("content-type","text/html;charset=utf8");
 	fs.readdir("./files", function(error,files) {
 		var folderfiles = [];
 		(function iterator(i){
@@ -24,7 +24,7 @@ var server = http.createServer((req,rep)=>{
 		})(0);
 		
 	})
-	rep.end();
+	rep.end('fack');
 });
 
 
