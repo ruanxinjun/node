@@ -28,15 +28,4 @@ var server = http.createServer((req,rep)=>{
 	});
 });
 
-let getMime = (extname)=>{
-	switch(extname) {
-		case '.html':
-			return 'text/html';
-			break;
-		case'.jpg':
-			return 'image/jpg';
-			break;
-	}
-};
-
 server.listen(3000);
