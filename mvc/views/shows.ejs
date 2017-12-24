@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title></title>
+  <link rel="stylesheet" href="../static/css/css.css">
+  <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+  <script src="../static/js/jquery-3.2.1.min.js"></script> 
+  <script>
+    function Deletes(folder,file){
+      if(confirm('sure delete???')){
+      $.post('/deletefile',{folder:folder,file:file},function(result){
+            if(result.status==1)
+              window.location.href = window.location.href;
+        });
+      }
+    }
+    </script>
+</head>
+<body>
+  <ol class="breadcrumb well">
+    <li>
+      <a href="/">Index</a>
+    </li>
+    <li>
+      <a href="/upload/<%=folder%>">Upload</a>
+    </li>
+  </ol>
+  <div class="alert alert-warning topalert">
+    <div class="container">
+    <div class="well uploadbar">
+      <div class="col-md-3 left text-left">Files Count: <%=albums.count%><br/>Total Size:<%=albums.sizes%></div>
+      <div class="col-md-9 right text-right"><a href="/upload/<%=folder%>" class="btn btn-info">upload photos</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="photolist col-md-11 col-md-offset-1">
+   <%for(var i=0;i<albums.files.length;i++){%>
+      <div class="col-md-2 photos">
+        <a href="#">
+          <img src="/uploads/<%=albums.folder%>/<%=albums.files[i]%>" style="width:120px;height:120px">
+        </a>
+      <div class="filename"><%=albums.files[i]%> (<%=albums.eachsize[i]%>)</div>
+      <a href="javascript:Deletes('<%=folder%>','<%=albums.files[i]%>')" class="btn btn-sm btn-warning delete">Delete</a>
+      </div>
+      <%}%>
+</div>  
+</body>
+</html>

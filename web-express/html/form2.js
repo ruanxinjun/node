@@ -12,10 +12,15 @@ var storage = multer.diskStorage({
   }
 })
 
+let fileFilter = (req,file,cb)=>{
+		if(/^image\/(\w)+$/.test(file.mimetype)){
+			cb(null, true);
+		}else{
+			cb(null,false);
+		}
+};
 
-var upload = multer({ storage: storage,fileFilter:(req, file, cb)=>{
-	cb(null, true)
-}});
+var upload = multer({storage,fileFilter});
 
 var app = express();
 
@@ -27,7 +32,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 var ups = upload.array('tupian',3);
 
-app.use('/',(request,response,next)=>{
+app.use((request,response,next)=>{
 	if(request.method.toLowerCase()=='post'){
 		ups(request,response,(error)=>{
 			if(error){
@@ -38,7 +43,8 @@ app.use('/',(request,response,next)=>{
 		});
 		return;
 	}
-	response.render('form2',{message:'hello body-parser,this is multer'}); 
+	let message ='hello body-parser,this is multer';
+	response.render('form2',{message}); 
 });
 
 
