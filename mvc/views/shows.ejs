@@ -15,13 +15,14 @@
   <script>
     //删除图片
     function Deletes(folder,file){
+
       $.confirm({
           title: '删除图片',
           content: '确认删除图片'+file+'吗？',
           confirmButton: '删除',
           cancelButton: '取消',
           confirm: function(){
-              $.post('/deletefile',{folder:folder,file:file},function(result){
+              $.post('/deletefile/'+folder+'/'+file,function(result){   
                 if(result.status==1){
                    var cm = $.dialog({
                        title: false,
@@ -36,7 +37,7 @@
         });
     };
     //显示图片
-    function ShowPhotos(src){
+    function ShowPhotos(folder,file){
         var cm = $.confirm({
             title: false,
             cancelButton: false,
@@ -45,9 +46,17 @@
             animationSpeed: 500,
             closeIcon:true,
             backgroundDismiss:false,
-            content: '<img src=\"'+src+'\" width=\"100%\">'
+            columnClass: 'bigpiccss',
+            content:function(){
+              var self = this;
+              return $.get('/get/'+folder+'/'+file,function(status){
+                var w = status.width;
+                var h = status.height;
+                self.setContent('<img src="/uploads/'+folder+'/'+file+'"/>');
+              }).done(function(){}).fail(function(){});
+            }
         });
-        setTimeout(function(){cm.close();},3000);
+        setTimeout(function(){cm.close();},5000);
     }
     </script>
 </head>
@@ -73,12 +82,12 @@
 <div class="photolist col-md-12 alert alert-warning">
    <%for(var i=0;i<albums.files.length;i++){%>
       <div class="photos">
-        <a href="javascript:ShowPhotos('/uploads/<%=albums.folder%>/<%=albums.files[i]%>')">
+        <a href="javascript:ShowPhotos('<%=albums.folder%>','<%=albums.files[i]%>')">
           <img class="photo_group" src="/uploads/<%=albums.folder%>/<%=albums.files[i]%>" style="width:120px;">
         </a>
       <div class="filename"><%=albums.files[i]%> (<%=albums.eachsize[i]%>)</div>
       <a href="javascript:Deletes('<%=folder%>','<%=albums.files[i]%>')"><img class="delete" src="/static/images/delete.png"></a>
-      <a href="javascript:ShowPhotos('/uploads/<%=albums.folder%>/<%=albums.files[i]%>')"><img class="zoom" src="/static/images/zoom.png"></a>
+      <a href="javascript:ShowPhotos('<%=albums.folder%>','<%=albums.files[i]%>')"><img class="zoom" src="/static/images/ZOOM.png"></a>
       </div>
     <%}%>
 </div>  

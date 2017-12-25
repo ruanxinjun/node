@@ -18,6 +18,10 @@ app.get('/photos/:folder',router.showPhotos);
 //upload
 app.use('/upload/:folder',router.uploadPhotos);
 //delete
-app.post('/deletefile',router.deletePhotos);
+app.post('/deletefile/:folder/:file',router.deletePhotos);
+//get single photo
+app.get('/get/:folder/:file',router.getSinglePhoto);
+//add folder
+app.get('/folder/add/:folder',router.addFolder);
 
 app.listen(3000,'127.0.0.1');

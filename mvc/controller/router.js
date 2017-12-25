@@ -30,7 +30,7 @@ exports.uploadPhotos  = (request,response,next)=>{
 //delete photos
 exports.deletePhotos = (request,response,next)=>{
 	if(request.method.toLowerCase()=='post'){
-		photos.deletFiles(request.body.folder,request.body.file,(status)=>{;
+		photos.deletFiles(request.params.folder,request.params.file,(status)=>{;
 			response.json({status});
 		});
 	};
@@ -41,6 +41,27 @@ exports.singleFolder = (request,response,next)=>{
 	if(request.params){
 		photos.getSingleFolder(request.params.folder,function(file,len){
 			response.json({file,len});
+		});
+	}
+};
+
+//get single photos
+exports.getSinglePhoto =  (request,response,next)=>{
+	if(request.params){
+		var folder = request.params.folder;
+		var file = request.params.file;
+		photos.getSinglePhoto(folder,file,(width,height)=>{
+			response.json({width,height});
+		});
+	}
+};
+
+//add folder
+exports.addFolder = (request,response,next)=>{
+	if(request.params){
+		var folder = request.params.folder;
+		photos.addFolder(folder,(status)=>{
+			response.json({status});
 		});
 	}
 };

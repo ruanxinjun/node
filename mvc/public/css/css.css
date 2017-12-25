@@ -1,5 +1,6 @@
 .photos{border:2px solid #efefef;border-radius:10px;margin:3px;padding:5px;background: white; 
  text-align: center;position:relative;display: inline-block; vertical-align: top;
+ width:23%;
 }
 .topalert:after{
 	content:'';
@@ -38,3 +39,7 @@
 
 .uploadbar{height: 80px;}
 .uploadbar .bigtxt{font-size:20pt;margin:5px;}
+.bigpiccss{
+	width:99%;
+	height:99%;
+}
