@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title></title>
-  <link rel="stylesheet" href="static/css/css.css">
-  <link rel="stylesheet" href="static/css/bootstrap.min.css">
-  <script src="static/js/jquery-3.2.1.min.js"></script>
-  <script src="static/js/promise.min.js"></script>
+  <link rel="stylesheet" href="/static/css/css.css">
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+  <script src="/static/js/jquery-1.11.0.min.js"></script>
+  <script src="/static/js/promise.min.js"></script>
   <script>
-  //create load model
+  //创建图片加载模型
    function modelLoadPhoto(i,folder) {
         return new Promise(function(resolve, reject) {
            setTimeout(function(){
@@ -28,34 +28,29 @@
 
   $(function(){
 
-      //define tasks
+      //定义1个任务进度
      var alltask = [];
-     //push task
+
+     //注入任务
      $(".eachphoto").each(function(i){ 
         var folder =  $(".eachphoto").eq(i).attr("folder");
         alltask.push(modelLoadPhoto(i,folder));
      });
-     //do task
+     
+     //执行队列
      Promise.all(alltask).then(function(){});
 
   });
   </script>
 </head>
 <body>
-  <ol class="breadcrumb well">
-    <li>
-      <a href="/">Index</a>
-    </li>
-    <li>
-      <a href="/upload/share">Upload</a>
-    </li>
-  </ol>
+  <%-include("menu",{folder:'share'})%>
   <div class="jumbotron alert alert-warning">
     <div class="container">
  <%for(var i=0;i<folders.length;i++){%>
       <div class="col-md-2 photos">
         <a href="/photos/<%=folders[i]%>">
-           <img class='eachphoto' folder="<%=folders[i]%>" title="<%=folders[i]%>" src="/static/images/loading.gif" style="width:80px;height:80px"><br/>
+           <img class='eachphoto' folder="<%=folders[i]%>" title="<%=folders[i]%>" src="/static/images/loading.gif" style="width:80px;"><br/>
           
         </a>
          <div class="badge"><%=folders[i]%><span class="eachfdcount"></span></div>

@@ -1,13 +1,9 @@
 var express = require('express');
 var router = require('./controller');
-var bodyParser = require('body-parser');
 
 var app = express();
 
 app.set('view engine','ejs');
-app.use(bodyParser.json()); 
-app.use(bodyParser.urlencoded({ extended: true }));
-
 
 //static
 app.use('/static',express.static('./public'));
@@ -23,7 +19,5 @@ app.get('/photos/:folder',router.showPhotos);
 app.use('/upload/:folder',router.uploadPhotos);
 //delete
 app.post('/deletefile',router.deletePhotos);
-
-
 
 app.listen(3000,'127.0.0.1');

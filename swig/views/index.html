@@ -1,0 +1,18 @@
+
+	{% extends './layout.html' %}
+	{% block head %} title {% endblock %}
+
+	{% block content %}
+	<ul>
+	
+
+		{% for  n in news %}
+		<li>{{ loop.key }} {{ n.title|title }}</li>
+		{%endfor%}
+
+		
+	</ul>
+	{% endblock %}
+
+
+		{% block foot %} foot {% endblock %}

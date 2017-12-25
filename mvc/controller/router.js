@@ -1,4 +1,4 @@
-var photos = require('../models/photos.js');
+var photos = require('../models/');
 
 //show folders
 exports.showIndex = (request,response,next)=>{
