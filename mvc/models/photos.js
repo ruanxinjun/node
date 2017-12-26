@@ -44,15 +44,15 @@ function Uploads(request,uploaddir,cb){
     	form.uploadDir = uploaddir;
     	form.parse(request, function(err, fields, files) { 
     		 //for(var k in files){
-    		  var sd  = time.format(new Date(),'YYYYMMDDHHmm');
-		      var extname = path.extname(files.tupian.name);
-    		  var oldname = files.tupian.path;
-		      var newname = uploaddir+'/'+sd+extname;
-		      fs.renameSync(oldname,newname); 
-		      //fs.renameSync(files[k].path,uploaddir+'/'+files[k].name); 
-		 	 //}
-		     cb();  
+    		   var sd  = time.format(new Date(),'YYYYMMDDHHmmss');
+		       var extname = path.extname(files.tupian.name);
+    		   var oldname = files.tupian.path;
+		       var newname = uploaddir+'/'+sd+extname;
+		       console.log(fields);
+		       fs.renameSync(oldname,newname); 
+		       cb();
     	});
+    	return;
 };
 
 //删除文件
@@ -60,8 +60,6 @@ function Uploads(request,uploaddir,cb){
 //file:图片
 function Deletefile(folder,file,cb){
 	fs.unlink('./uploads/'+folder+'/'+file, function(error) {
-		console.log(folder);
-			console.log(file);
 		if(error){
 			cb(0);
 		}else{
@@ -70,9 +68,8 @@ function Deletefile(folder,file,cb){
 	})
 };
 
-//从目录获取随机1个图片
+//获取相册封面
 //folder:目录
-//len
 function Getsingfolder(folder,cb){
 	
 	fs.readdir('./uploads/'+folder, (error,files)=> {
@@ -86,7 +83,9 @@ function Getsingfolder(folder,cb){
 	})
 };
 
-//get single photo
+//获取一个图片的尺寸
+//folder:文件夹
+//file:文件
 function GetSinglePhoto(folder,file,cb){
 	var path = './uploads/'+folder+'/'+file;
 	imagesize(path,(error,pixels)=>{
@@ -99,7 +98,8 @@ function GetSinglePhoto(folder,file,cb){
 	});
 }
 
-//add folder
+//添加相册
+//folder:文件夹
 function AddFolder(folder,cb){
 	var path = './uploads/'+folder;
 	fs.mkdir(path,(error)=>{
@@ -111,6 +111,32 @@ function AddFolder(folder,cb){
 	});
 };
 
+//删除相册
+//folder:文件夹
+function DelFolder(folder,cb){
+	var path = './uploads/'+folder;
+	fs.readdir(path, (error,files)=>{
+		if(error){
+			cb(0); //发生错误
+			return;
+		}
+		if(files.length>0){
+			cb(-1); //存在图片，不能删除
+			return;
+		}else{
+			fs.rmdir(path,(error)=>{
+				if(error)
+				{
+					cb(0); //发生错误
+					return;
+				}
+				cb(1); //删除成功
+			});
+		}
+
+	});
+};
+
 //暴露
 exports.getPhotos = Photos;
 exports.getFolders = Folders;
@@ -119,3 +145,4 @@ exports.deletFiles = Deletefile;
 exports.getSingleFolder = Getsingfolder;
 exports.getSinglePhoto = GetSinglePhoto;
 exports.addFolder = AddFolder;
+exports.delFolder = DelFolder;

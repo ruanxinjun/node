@@ -65,3 +65,12 @@ exports.addFolder = (request,response,next)=>{
 		});
 	}
 };
+
+///folder/del/:folder
+exports.delFolder = (request,response,next)=>{
+	if(request.method.toLowerCase()=='post'){
+		photos.delFolder(request.params.folder,(status)=>{;
+			response.json({status});
+		});
+	};
+};

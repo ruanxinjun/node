@@ -23,5 +23,7 @@ app.post('/deletefile/:folder/:file',router.deletePhotos);
 app.get('/get/:folder/:file',router.getSinglePhoto);
 //add folder
 app.get('/folder/add/:folder',router.addFolder);
+//delete folder
+app.post('/folder/del/:folder',router.delFolder);
 
 app.listen(3000,'127.0.0.1');

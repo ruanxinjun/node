@@ -9,6 +9,7 @@
   <link rel="stylesheet" type="text/css" href="/static/css/jquery-confirm.css" />
   <style>
   .jconfirm.jconfirm-white .jconfirm-bg {background-color: rgba(0, 0, 0, 1);}
+  .photos{width:20%;}
   </style>
   <script src="/static/js/jquery-1.11.0.min.js"></script>
   <script src="/static/js/jquery-confirm.js"></script>
@@ -18,7 +19,7 @@
 
       $.confirm({
           title: '删除图片',
-          content: '确认删除图片'+file+'吗？',
+          content: '确认删除图片<b>'+file+'</b>吗？',
           confirmButton: '删除',
           cancelButton: '取消',
           confirm: function(){
@@ -72,11 +73,14 @@
   <%-include("menu",{folder})%>
   <div class="topalert">
     <div class="container">
-    <div class="well uploadbar">
-      <div class="col-md-3 left text-left">Files Count: <%=albums.count%><br/>Total Size:<%=albums.sizes%></div>
-      <div class="col-md-9 right text-right"><a href="/upload/<%=folder%>" class="btn btn-info">upload photos</a>
+    <div class="col-md-12">
+      <div class="col-md-3 left text-left">图片数: <b><%=albums.count%></b> &nbsp;&nbsp;文件总大小:<b><%=albums.sizes%></b>
+      </div>
+      <div class="col-md-9 right text-right">
+        <a href="/upload/<%=folder%>" class="btn btn-info">上传图片到相册</a>
       </div>
     </div>
+    <hr/>
   </div>
 </div>
 <div class="photolist col-md-12 alert alert-warning">

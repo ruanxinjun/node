@@ -1,5 +1,3 @@
 {
-	"version":"5.0",
-	"main":"router.js",
-	"name":"router-controller"
+	"main":"router.js"
 }
