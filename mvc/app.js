@@ -15,8 +15,10 @@ app.get('/',router.showIndex);
 app.get('/single/:folder',router.singleFolder);
 //folders
 app.get('/photos/:folder',router.showPhotos);
-//upload
-app.use('/upload/:folder',router.uploadPhotos);
+//upload 采用 formidable 模式
+//app.use('/upload/:folder',router.uploadPhotos);
+//upload 采用 multer 模式
+app.use('/upload/:folder',router.uploadPhotos2);
 //delete
 app.post('/deletefile/:folder/:file',router.deletePhotos);
 //get single photo

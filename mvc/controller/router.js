@@ -1,4 +1,4 @@
-var photos = require('../models/');
+let photos = require('../models/');
 
 //show folders
 exports.showIndex = (request,response,next)=>{
@@ -9,17 +9,29 @@ exports.showIndex = (request,response,next)=>{
 
 //show albums
 exports.showPhotos= (request,response,next)=>{
-	 var folder = request.params.folder;
-	 photos.getPhotos(folder,function(albums){
+	 let folder = request.params.folder;
+	 photos.getPhotos(folder,(albums)=>{
 		response.render('shows',{albums,folder});
 	 });
 };
 
-//upload photos 
+//upload photos 采用 formidable 模式
 exports.uploadPhotos  = (request,response,next)=>{
-	 var folder = request.params?request.params.folder:'share';
+	 let folder = request.params?request.params.folder:'share';
 	 if(request.method.toLowerCase()=='post'){
-	 	photos.uploadFiles(request,'./uploads/'+folder,function(){
+	 	photos.uploadFiles(request,'./uploads/'+folder,()=>{
+	 		response.redirect('/photos/'+folder);
+	 	});
+	 	return;
+	 };
+	 response.render('upload',{folder});
+};
+
+//upload photos 采用 multer 模式
+exports.uploadPhotos2  = (request,response,next)=>{
+	 let folder = request.params?request.params.folder:'share';
+	 if(request.method.toLowerCase()=='post'){
+	 	photos.uploadFiles2(request,response,'./uploads/'+folder,()=>{
 	 		response.redirect('/photos/'+folder);
 	 	});
 	 	return;
@@ -39,7 +51,7 @@ exports.deletePhotos = (request,response,next)=>{
 // get single first folder imgs 
 exports.singleFolder = (request,response,next)=>{
 	if(request.params){
-		photos.getSingleFolder(request.params.folder,function(file,len){
+		photos.getSingleFolder(request.params.folder,(file,len)=>{
 			response.json({file,len});
 		});
 	}
@@ -48,8 +60,8 @@ exports.singleFolder = (request,response,next)=>{
 //get single photos
 exports.getSinglePhoto =  (request,response,next)=>{
 	if(request.params){
-		var folder = request.params.folder;
-		var file = request.params.file;
+		let folder = request.params.folder;
+		let file = request.params.file;
 		photos.getSinglePhoto(folder,file,(width,height)=>{
 			response.json({width,height});
 		});
@@ -59,7 +71,7 @@ exports.getSinglePhoto =  (request,response,next)=>{
 //add folder
 exports.addFolder = (request,response,next)=>{
 	if(request.params){
-		var folder = request.params.folder;
+		let folder = request.params.folder;
 		photos.addFolder(folder,(status)=>{
 			response.json({status});
 		});

@@ -2,15 +2,18 @@ var express = require('express');
 var http = require('http');
 var bodyParser = require('body-parser');
 var multer  = require('multer');
+var time = require('silly-datetime');
+var path = require('path');
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, './uploads')
   },
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now())
+    var fileFormat =path.extname(file.originalname);
+    cb(null, file.fieldname + '-' + Date.now() + fileFormat);
   }
-})
+});
 
 let fileFilter = (req,file,cb)=>{
 		if(/^image\/(\w)+$/.test(file.mimetype)){

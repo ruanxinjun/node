@@ -1,30 +1,16 @@
-var fs = require('fs');
-var formidable = require('formidable');
-var time = require('silly-datetime');
-var path  =require('path');
-var imagesize = require('image-size');
+let fs = require('fs');
+let formidable = require('formidable');
+let time = require('silly-datetime');
+let path  =require('path');
+let multer  = require('multer');
+let imagesize = require('image-size');
 let {random,round} = Math;
 
-
-
-//获取一个目录下面的文件夹
-function Folders(cb){
-	fs.readdir('./uploads',(error,folders)=>{
-		var folder = [];
-		for(let i=0;i<folders.length;i++){
-			folder.push(folders[i]);
-		}
-		cb(folder);
-	});
-};
-
-
-//获取1个目录下面的图片
-//folder:目录
-function Photos(folder,cb){
+//获取相册内容
+exports.getPhotos = (folder,cb)=>{
 	fs.readdir('./uploads/'+folder,(error,files)=>{
-		var count = files.length;
-		var tupian = {folder,files:[],eachsize:[],count,sizes:0};
+		let count = files.length;
+		let tupian = {folder,files:[],eachsize:[],count,sizes:0};
 		for(let i=0;i<count;i++){	
 			let stat = fs.statSync('./uploads/'+folder+'/'+files[i]);
 			let _size = round(stat.size/1024);
@@ -37,29 +23,65 @@ function Photos(folder,cb){
 	});
 };
 
-//上传
-//uploaddir:上传目录
-function Uploads(request,uploaddir,cb){
-		var form = new formidable.IncomingForm();
+//获取所有相册
+exports.getFolders = (cb)=>{
+	fs.readdir('./uploads',(error,folders)=>{
+		let folder = [];
+		for(let i=0;i<folders.length;i++){
+			folder.push(folders[i]);
+		}
+		cb(folder);
+	});
+};
+
+//上传图片 formidable
+exports.uploadFiles = (request,uploaddir,cb)=>{
+		let form = new formidable.IncomingForm();
     	form.uploadDir = uploaddir;
-    	form.parse(request, function(err, fields, files) { 
-    		 //for(var k in files){
-    		   var sd  = time.format(new Date(),'YYYYMMDDHHmmss');
-		       var extname = path.extname(files.tupian.name);
-    		   var oldname = files.tupian.path;
-		       var newname = uploaddir+'/'+sd+extname;
-		       console.log(fields);
+    	form.parse(request, (err, fields, files)=> { 
+    		 //for(let k in files){
+    		   let sd  = time.format(new Date(),'YYYYMMDDHHmmss');
+		       let extname = path.extname(files.tupian.name);
+    		   let oldname = files.tupian.path;
+		       let newname = uploaddir+'/'+sd+extname;
+		       console.log(files.tupian);
 		       fs.renameSync(oldname,newname); 
 		       cb();
     	});
     	return;
 };
+//上传图片 multer
+exports.uploadFiles2 = (request,response,uploaddir,callback)=>{
+	let storage = multer.diskStorage({
+	destination:  (request, file, cb)=> {
+	    cb(null, uploaddir)
+	  },
+	 filename:  (request, file, cb) =>{
+	    let fileFormat =path.extname(file.originalname);
+	    cb(null, file.fieldname + '-' + Date.now() + fileFormat);
+	  }
+	});
+	let fileFilter = (request,file,cb)=>{
+		if(/^image\/(\w)+$/.test(file.mimetype)){
+			cb(null, true);
+		}else{
+			cb(null,false);
+		}
+	};
+	let upload = multer({storage,fileFilter});
+	let ups = upload.array('tupian');
+	ups(request,response,(error)=>{
+		if(error){
+			throw error;
+		}else{
+			callback();
+		}
+	});
+};
 
-//删除文件
-//folder:目录
-//file:图片
-function Deletefile(folder,file,cb){
-	fs.unlink('./uploads/'+folder+'/'+file, function(error) {
+//删除图片
+exports.deletFiles = (folder,file,cb)=>{
+	fs.unlink('./uploads/'+folder+'/'+file, (error) =>{
 		if(error){
 			cb(0);
 		}else{
@@ -67,27 +89,22 @@ function Deletefile(folder,file,cb){
 		}
 	})
 };
-
-//获取相册封面
-//folder:目录
-function Getsingfolder(folder,cb){
+//删除相册
+exports.getSingleFolder = (folder,cb)=>{
 	
 	fs.readdir('./uploads/'+folder, (error,files)=> {
-		var len = files.length;
+		let len = files.length;
 		if(files&&len>0){
-			var singfile = files[0];
+			let singfile = files[0];
 			cb('./uploads/'+folder+'/'+singfile,len);
 		}else{
 			cb('',0);
 		}
 	})
 };
-
-//获取一个图片的尺寸
-//folder:文件夹
-//file:文件
-function GetSinglePhoto(folder,file,cb){
-	var path = './uploads/'+folder+'/'+file;
+//获取图片大小
+exports.getSinglePhoto = (folder,file,cb)=>{
+	let path = './uploads/'+folder+'/'+file;
 	imagesize(path,(error,pixels)=>{
 		if(error){
 			return;
@@ -97,24 +114,28 @@ function GetSinglePhoto(folder,file,cb){
 		);
 	});
 }
+//增加相册
+exports.addFolder = (folder,cb)=>{
+	//只允许英文
+	let  reg =/^[A-Za-z]+$/g;
 
-//添加相册
-//folder:文件夹
-function AddFolder(folder,cb){
-	var path = './uploads/'+folder;
+	if(reg.test(folder)){
+
+	let path = './uploads/'+folder;
 	fs.mkdir(path,(error)=>{
 		if(error){
 			cb(0);
 			return;
 		}
-		cb(1);
-	});
+			cb(1);
+		});
+	}else{
+		cb(-1);
+	}
 };
-
 //删除相册
-//folder:文件夹
-function DelFolder(folder,cb){
-	var path = './uploads/'+folder;
+exports.delFolder = (folder,cb)=>{
+	let path = './uploads/'+folder;
 	fs.readdir(path, (error,files)=>{
 		if(error){
 			cb(0); //发生错误
@@ -136,13 +157,3 @@ function DelFolder(folder,cb){
 
 	});
 };
-
-//暴露
-exports.getPhotos = Photos;
-exports.getFolders = Folders;
-exports.uploadFiles = Uploads;
-exports.deletFiles = Deletefile;
-exports.getSingleFolder = Getsingfolder;
-exports.getSinglePhoto = GetSinglePhoto;
-exports.addFolder = AddFolder;
-exports.delFolder = DelFolder;
