@@ -11,29 +11,27 @@ exports.getPhotos = (folder,cb)=>{
 	fs.readdir('./uploads/'+folder,(error,files)=>{
 		let count = files.length;
 		let tupian = {folder,files:[],eachsize:[],count,sizes:0};
-		for(let i=0;i<count;i++){	
-			let stat = fs.statSync('./uploads/'+folder+'/'+files[i]);
+		files.forEach(function(file){
+			let stat = fs.statSync('./uploads/'+folder+'/'+file);
 			let _size = round(stat.size/1024);
 			tupian.eachsize.push(_size+'KB');
-			tupian.files.push(files[i]);
+			tupian.files.push(file);
 			tupian.sizes+=_size;
-		}
+		});
 		tupian.sizes+='KB';
 		cb(tupian);
 	});
 };
-
 //获取所有相册
 exports.getFolders = (cb)=>{
 	fs.readdir('./uploads',(error,folders)=>{
 		let folder = [];
-		for(let i=0;i<folders.length;i++){
-			folder.push(folders[i]);
-		}
+		folders.forEach(function(fd){
+			folder.push(fd);
+		});
 		cb(folder);
 	});
 };
-
 //上传图片 formidable
 exports.uploadFiles = (request,uploaddir,cb)=>{
 		let form = new formidable.IncomingForm();
@@ -78,7 +76,6 @@ exports.uploadFiles2 = (request,response,uploaddir,callback)=>{
 		}
 	});
 };
-
 //删除图片
 exports.deletFiles = (folder,file,cb)=>{
 	fs.unlink('./uploads/'+folder+'/'+file, (error) =>{
